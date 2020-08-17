@@ -1,0 +1,345 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package Visao;
+
+import Controle.ConectaBanco;
+import Controle.ModeloTabela;
+import java.sql.SQLException;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.MaskFormatter;
+
+/**
+ *
+ * @author NOTBOOK DE MAYCON
+ */
+public class PesquisaVenda extends javax.swing.JFrame {
+   NumberFormat numberFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));  
+    ConectaBanco conecBanco = new ConectaBanco();
+    public PesquisaVenda() {
+        initComponents();
+        try {
+           MaskFormatter form = new MaskFormatter("##/##/####"); // elemento para criar formatato de mascara
+           ctFor_data.setFormatterFactory(new DefaultFormatterFactory(form)); //atribui a mascara ao campo
+        } catch (ParseException ex) {
+            
+        }
+      numberFormat.setMaximumFractionDigits(2);
+      numberFormat.setMinimumFractionDigits(2);
+    }
+
+       public void preecherTabelaVendas(String SQL){ // METODO PARA PREENCHER TABELA NA INTERFACE
+        ArrayList dados = new ArrayList();
+        
+        String [] Colunas  = new String []{"ID", "Data da Venda", "Valor da Venda", "Cliente"};
+        conecBanco.conexaoBanco();
+        conecBanco.executaSQL( SQL);
+      try {
+          conecBanco.rs.first();
+          do {
+              dados.add(new Object[]{conecBanco.rs.getInt("id_venda"),conecBanco.rs.getString("data_venda"), conecBanco.rs.getFloat("valor_venda"), conecBanco.rs.getString("nome_cliente")});
+          }while (conecBanco.rs.next());
+          
+      } catch (SQLException ex) {
+         JOptionPane.showMessageDialog(rootPane, "Erro ao Preencher o ArrayList! \n"+ ex);
+      }
+      
+       ModeloTabela modelo = new ModeloTabela(dados,Colunas);
+       
+        tbl_vendas.setModel(modelo);
+        tbl_vendas.getColumnModel().getColumn(0).setPreferredWidth(85);
+        tbl_vendas.getColumnModel().getColumn(0).setResizable(false);
+        tbl_vendas.getColumnModel().getColumn(1).setPreferredWidth(100);
+        tbl_vendas.getColumnModel().getColumn(1).setResizable(false);
+        tbl_vendas.getColumnModel().getColumn(2).setPreferredWidth(120);
+        tbl_vendas.getColumnModel().getColumn(2).setResizable(false);
+        tbl_vendas.getColumnModel().getColumn(3).setPreferredWidth(274);
+        tbl_vendas.getColumnModel().getColumn(3).setResizable(false);
+        tbl_vendas.getTableHeader().setReorderingAllowed(false);
+       tbl_vendas.setAutoResizeMode(tbl_vendas.AUTO_RESIZE_OFF);
+        tbl_vendas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        conecBanco.desconectar();
+    }//  FINAL METODO PARA IMPRIMIR TABELA NA INTERFACE
+       
+       
+       public void preecherTabelaDetalhes(String SQL){ // METODO PARA PREENCHER TABELA NA INTERFACE
+        ArrayList dados = new ArrayList();
+        
+        String [] Colunas  = new String []{"Produto", "Quantidade", "Preço", "Total "};
+        conecBanco.conexaoBanco();
+        conecBanco.executaSQL( SQL);
+      try {
+          conecBanco.rs.first();
+          do {
+              float quan = conecBanco.rs.getFloat("quantidade_produto");
+              float pre = conecBanco.rs.getFloat("preco_venda");
+              float resul = quan * pre;
+              dados.add(new Object[]{conecBanco.rs.getString("nome_produto"), conecBanco.rs.getInt("quantidade_produto"), (numberFormat.format(conecBanco.rs.getFloat("preco_venda"))), (numberFormat.format(resul))});
+          }while (conecBanco.rs.next());
+          
+      } catch (SQLException ex) {
+         JOptionPane.showMessageDialog(rootPane, "Erro ao Preencher o ArrayList! \n"+ ex);
+      }
+      
+       ModeloTabela modelo = new ModeloTabela(dados,Colunas);
+       
+        tbl_detalhes.setModel(modelo);
+        tbl_detalhes.getColumnModel().getColumn(0).setPreferredWidth(300);
+        tbl_detalhes.getColumnModel().getColumn(0).setResizable(false);
+        tbl_detalhes.getColumnModel().getColumn(1).setPreferredWidth(100);
+        tbl_detalhes.getColumnModel().getColumn(1).setResizable(false);
+        tbl_detalhes.getTableHeader().setReorderingAllowed(false);
+//       tbl_vendas.setAutoResizeMode(tbl_pesquisa.AUTO_RESIZE_OFF);
+        tbl_detalhes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        conecBanco.desconectar();
+    }//  FINAL METODO PARA IMPRIMIR TABELA NA INTERFACE
+       
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jLabel1 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbl_detalhes = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tbl_vendas = new javax.swing.JTable();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        ctFor_data = new javax.swing.JFormattedTextField();
+        btn_buscar = new javax.swing.JButton();
+        btn_sair = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Formulario de Vendas");
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 0, 153));
+        jLabel1.setText("Formulario de Vendas");
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel2.setText("Digite uma data:");
+
+        tbl_detalhes.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        tbl_detalhes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_detalhesMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tbl_detalhes);
+
+        tbl_vendas.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        tbl_vendas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_vendasMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tbl_vendas);
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel3.setText("Vendas Realizadas");
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel4.setText("Detalhes da Venda");
+
+        ctFor_data.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                ctFor_dataKeyReleased(evt);
+            }
+        });
+
+        btn_buscar.setText("Buscar");
+        btn_buscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_buscarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(ctFor_data, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(34, 34, 34)
+                                .addComponent(btn_buscar)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(ctFor_data, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_buscar))
+                .addGap(38, 38, 38)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        btn_sair.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/iconfinder_stock_exit_94146.png"))); // NOI18N
+        btn_sair.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_sairActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(177, 177, 177)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_sair, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(22, 22, 22))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btn_sair, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(32, Short.MAX_VALUE))
+        );
+
+        setSize(new java.awt.Dimension(629, 596));
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void ctFor_dataKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ctFor_dataKeyReleased
+       
+    }//GEN-LAST:event_ctFor_dataKeyReleased
+
+    private void btn_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarActionPerformed
+//        ctFor_data.setText("11/01/2020");
+        preecherTabelaVendas("select * from venda inner join clientes on venda.id_cliente = clientes.id_cliente where data_venda ='"+ctFor_data.getText()+"'");
+    }//GEN-LAST:event_btn_buscarActionPerformed
+
+    private void tbl_detalhesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_detalhesMouseClicked
+ 
+    }//GEN-LAST:event_tbl_detalhesMouseClicked
+
+    private void tbl_vendasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_vendasMouseClicked
+       int cod = (int) tbl_vendas.getValueAt(tbl_vendas.getSelectedRow(),0);
+        preecherTabelaDetalhes("select * from venda inner join itens_venda_produto on venda.id_venda = itens_venda_produto.id_venda inner join produto on itens_venda_produto.id_produto = produto.id_produto where venda.id_venda ='"+cod+"'");
+    }//GEN-LAST:event_tbl_vendasMouseClicked
+
+    private void btn_sairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_sairActionPerformed
+        dispose();
+    }//GEN-LAST:event_btn_sairActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(PesquisaVenda.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(PesquisaVenda.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(PesquisaVenda.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(PesquisaVenda.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new PesquisaVenda().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_buscar;
+    private javax.swing.JButton btn_sair;
+    private javax.swing.JFormattedTextField ctFor_data;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable tbl_detalhes;
+    private javax.swing.JTable tbl_vendas;
+    // End of variables declaration//GEN-END:variables
+}
